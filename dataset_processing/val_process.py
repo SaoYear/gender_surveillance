@@ -73,5 +73,5 @@ class ImgInput:
         return _img, _label
 
 
-# data = ImgInput('C:/Users/sn_96/Desktop/毕业设计_基于神经网络/Database/PETA dataset_19000/rescale/', 100)
+# data = ImgInput('DIR', 100)
 # data.next_batch()
