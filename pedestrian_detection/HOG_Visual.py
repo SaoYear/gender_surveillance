@@ -4,11 +4,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import time
 
-im = io.imread('C:/Users/sn_96/Desktop/FYP_Gender_Processing/Database/data_test/000_1_1_.bmp')
+im = io.imread('DIR/000_1_1_.bmp')
 start = time.process_time()
 
 
-im_gy = io.imread('C:/Users/sn_96/Desktop/FYP_Gender_Processing/Database/data_test/000_1_1_.bmp', as_gray=True)
+im_gy = io.imread('DIR/000_1_1_.bmp', as_gray=True)
 normalised_blocks, hog_image = hog(im_gy, orientations=9, pixels_per_cell=(8, 8), cells_per_block=(2, 2), visualize=True)
 stop = time.process_time()
 hot_image = np.array(hog_image, dtype=float)
