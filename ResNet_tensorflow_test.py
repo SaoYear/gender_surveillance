@@ -1,0 +1,140 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
+from tensorflow.contrib.slim.python.slim.nets import resnet_utils, resnet_v2
+# ResNet has the shape of 50, 101, 152, 200
+import tensorflow as tf
+import NN_code.Image_Process.train_process as p
+
+import random
+import numpy as np
+import os
+os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+
+slim = tf.contrib.slim
+resnet_arg_scope = resnet_utils.resnet_arg_scope
+config = tf.ConfigProto()
+config.gpu_options.allow_growth = True
+
+# ResNet
+# Args:
+#     inputs: A tensor of size [batch, height_in, width_in, channels].
+#     blocks: A list of length equal to the number of ResNet blocks. Each element
+#       is a resnet_utils.Block object describing the units in the block.
+#     num_classes: Number of predicted classes for classification tasks. If None
+#       we return the features before the logit layer.
+#     is_training: whether batch_norm layers are in training mode.
+#     global_pool: If True, we perform global average pooling before computing the
+#       logits. Set to True for image classification, False for dense prediction.
+#     output_stride: If None, then the output will be computed at the nominal
+#       network stride. If output_stride is not None, it specifies the requested
+#       ratio of input to output spatial resolution.
+#     include_root_block: If True, include the initial convolution followed by
+#       max-pooling, if False excludes it. If excluded, `inputs` should be the
+#       results of an activation-less convolution.
+#     reuse: whether or not the network and its variables should be reused. To be
+#       able to reuse 'scope' must be given.
+#     scope: Optional variable_scope.
+# Return:
+#     net: A rank-4 tensor of size [batch, height_out, width_out, channels_out].
+#       If global_pool is False, then height_out and width_out are reduced by a
+#       factor of output_stride compared to the respective height_in and width_in,
+#       else both height_out and width_out equal one. If num_classes is None, then
+#       net is the output of the last ResNet block, potentially after global
+#       average pooling. If num_classes is not None, net contains the pre-softmax
+#       activations.
+#     end_points: A dictionary from components of the network to the corresponding
+#       activation.
+
+class ResNet_Model(object):
+    def __init__(self, lr=5e-5, batch_size=64, dropout_prob=0.9, epoch=200,
+                 train_dir='C:/Users/sn_96/Desktop/FYP_Gender_Processing/Database/data_train/',
+                 test_dir='C:/Users/sn_96/Desktop/FYP_Gender_Processing/Database/data_val/'):
+
+        # 输入数据
+        self.data = p.ImgInput(train_dir, batch_size)
+        self.test = p.ImgInput(test_dir, batch_size)
+        self.batch_size = batch_size
+        self.dropout_prob = dropout_prob
+        self.lr = lr
+        self.epoch = epoch
+        self.cross_entropy = 0
+        self.train_step = 0
+        self.init = 0
+        self.build_model()
+
+    def build_model(self):
+        self.img = tf.placeholder(tf.float32, [None, 160, 96, 3])/255
+        self.label = tf.placeholder(tf.float32, [None, 2])
+
+        with slim.arg_scope(resnet_v2.resnet_arg_scope()):
+            net, _ = resnet_v2.resnet_v2_50(self.img, num_classes=2, is_training=True, global_pool=True)
+            net = tf.reshape(net, [self.batch_size, 2])
+            # dense_1 = tf.layers.dense(net, units=5, activation=tf.nn.relu)
+            self.prediction = tf.nn.softmax(net)
+
+            # self.prediction = tf.nn.softmax(tf.layers.dense(dense_1, units=2))
+
+        with tf.variable_scope('result') as scope:
+            correct_prediction = tf.equal(tf.argmax(self.prediction, 1), tf.argmax(self.label, 1))
+
+            self.accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+
+        reg = tf.contrib.layers.apply_regularization(tf.contrib.layers.l2_regularizer(1e-3), tf.trainable_variables())
+        self.cross_entropy = tf.reduce_mean(
+            -tf.reduce_sum(
+                self.label * tf.log(tf.clip_by_value(self.prediction, 1e-10, 0.999999)), reduction_indices=[1])) + reg
+
+        global_step = tf.Variable(0, trainable=False)
+        # self.learning = tf.train.exponential_decay(self.lr, global_step, 1750, 0.01, staircase=True)
+        self.train_step = tf.train.AdamOptimizer(self.lr).minimize(self.cross_entropy, global_step=global_step)
+
+        # self.train_step = tf.train.GradientDescentOptimizer(learning_rate=self.learning_rate).minimize(
+        #     self.cross_entropy, global_step=global_step)
+        self.f_cross_entropy = tf.reduce_mean(
+            -tf.reduce_sum(
+                self.label * tf.log(tf.clip_by_value(self.prediction, 1e-11, 0.999999999)),
+                reduction_indices=[1]))
+
+
+    def train(self):
+        sess = tf.Session(config=config)
+        init = tf.global_variables_initializer()
+        sess.run(init)
+        _loop = self.data.total_batch // self.data.batch_size
+        _loop_test = self.test.total_batch // self.data.batch_size
+        for i in range(self.epoch):
+            wrong_index = []
+
+            for j in range(_loop):
+                train_x, train_y = self.data.next_batch()
+
+                #pre = sess.run(prediction, feed_dict={xs: batch_xs, ys: batch_ys, keep_prob: 0.5})
+                #print(np.size(pre))
+                #sess.run(train_step, feed_dict={xs: batch_xs, ys: batch_ys, keep_prob: 0.5})
+                _, c, result = sess.run([self.train_step, self.cross_entropy, self.prediction],
+                                              feed_dict={self.img: train_x, self.label: train_y})
+            total_accuracy = []
+                # if j % 20 == 0:
+
+                # for index, value in enumerate(list(test)):
+                #     if not value:
+                #         wrong_index.append((index + j * self.batch_size) % 11122)
+                # print('Learning rate:', test)
+            # print("Pin sample:", test)
+            for k in range(_loop_test):
+                text_x, text_y = self.test.next_batch()
+                accuracy, loss = sess.run([self.accuracy, self.f_cross_entropy],
+                                            feed_dict={self.img: text_x, self.label: text_y})
+                total_accuracy.append(accuracy)
+            print("Epoch times:" + str(i))
+            print("cross_entropy = ", "{:.3f}".format(c))
+            print("Accuracy list", total_accuracy)
+            print("Accuracy", np.mean(total_accuracy))
+            # print('Test loss:', loss)
+
+
+
+model = ResNet_Model()
+model.train()
