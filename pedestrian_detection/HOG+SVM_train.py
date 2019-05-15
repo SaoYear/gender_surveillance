@@ -11,7 +11,7 @@ import time
 
 
 class PedestrianDetection(object):
-    def __init__(self,  data_dir='C:/Users/sn_96/Desktop/FYP_Gender_Processing/Database/pd_dataset/'):
+    def __init__(self,  data_dir='DIR/pd_dataset/'):
         self.data_dir = data_dir
         self.data, self.img_dir = self.get_data()     # Image list, address
         print('The size of the images:', end='')
