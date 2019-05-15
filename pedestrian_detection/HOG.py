@@ -19,7 +19,7 @@ def get_hog(image):
     hist = hog.compute(image)
     return hist
 
-src = cv.imread('C:/Users/sn_96/Desktop/FYP_Gender_Processing/Database/data_test/000_1_1_.bmp')
+src = cv.imread('DIR/000_1_1_.bmp')
 plt.imshow(src, cmap='gray_r')
 
 plt.show()
