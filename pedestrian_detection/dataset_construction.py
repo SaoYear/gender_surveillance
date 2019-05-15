@@ -4,8 +4,8 @@ import math
 import random
 
 
-correct_dir = 'C:/Users/sn_96/Desktop/FYP_Gender_Processing/Database/data_test/'
-wrong_dir = 'E:/Cache/INRIAPerson/Train/neg/'
+correct_dir = 'DIR/data_test/'
+wrong_dir = 'DIR/INRIAPerson/Train/neg/'
 correct_file = []
 wrong_file = []
 
@@ -25,7 +25,7 @@ for id, file in enumerate(wrong_file):
     box = (rand_length, rand_weight, rand_length + 96, rand_weight + 160)
     img_new = img.crop(box)
     file_type = file.split('.')[-1]
-    img_new.save('C:/Users/sn_96/Desktop/FYP_Gender_Processing/Database/pd_dataset/neg/neg_{}.{}'.format(id, file_type))
+    img_new.save('DIR/neg/neg_{}.{}'.format(id, file_type))
 
 
 print("\nCropping the negative examples for twice:")
@@ -38,7 +38,7 @@ for id, file in enumerate(wrong_file):
     box = (rand_length, rand_weight, rand_length + 96, rand_weight + 160)
     img_new = img.crop(box)
     file_type = file.split('.')[-1]
-    img_new.save('C:/Users/sn_96/Desktop/FYP_Gender_Processing/Database/pd_dataset/neg/neg_{}.{}'.format(
+    img_new.save('DIR/neg/neg_{}.{}'.format(
         id + len(wrong_file), file_type))
 
 
@@ -48,7 +48,7 @@ for id, file in enumerate(wrong_file):
 #         print('.', end='')
 #     img = Image.open(correct_dir + file)
 #     file_type = file.split('.')[-1]
-#     img.save('C:/Users/sn_96/Desktop/FYP_Gender_Processing/Database/pd_dataset/pos/pos_{}.{}'.format(id+2000, file_type))
+#     img.save('DIR/pos/pos_{}.{}'.format(id+2000, file_type))
     # 这里的pos图像经过了镜面对称
 
 
