@@ -50,8 +50,8 @@ config.gpu_options.allow_growth = True
 
 class ResNet_Model(object):
     def __init__(self, lr=1e-4, batch_size=128, dropout_prob=0.8, epoch=100,
-                 train_dir='C:/Users/sn_96/Desktop/毕业设计_基于神经网络/Database/PETA dataset_19000/rescale/',
-                 test_dir='C:/Users/sn_96/Desktop/毕业设计_基于神经网络/Database/PETA dataset_19000/test/'):
+                 train_dir='DIR/PETA dataset_19000/rescale/',
+                 test_dir='DIR/PETA dataset_19000/test/'):
 
         # 输入数据
         self.data = p.ImgInput(train_dir, batch_size)
