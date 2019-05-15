@@ -9,9 +9,9 @@ import time
 
 class Model(object):
     def __init__(self, lr=5e-5, batch_size=128, dropout_prob=0.9, epoch=100,
-                 train_dir='C:/Users/sn_96/Desktop/FYP_Gender_Processing/Database/data_train/',
-                 val_dir='C:/Users/sn_96/Desktop/FYP_Gender_Processing/Database/data_test/',
-                 test_dir='C:/Users/sn_96/Desktop/FYP_Gender_Processing/Database/data_val/'):
+                 train_dir='DIR/Database/data_train/',
+                 val_dir='DIR/Database/data_test/',
+                 test_dir='DIR/Database/data_val/'):
         # 输入数据
         self.data = p.ImgInput(train_dir, batch_size)
         self.test = p.ImgInput(val_dir, batch_size)
