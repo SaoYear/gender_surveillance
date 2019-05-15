@@ -1,9 +1,9 @@
 import os
 
-train = 'C:/Users/sn_96/Desktop/毕业设计_基于神经网络/Database/data_train/'
-test = "C:/Users/sn_96/Desktop/毕业设计_基于神经网络/Database/data_test/"
-val = "C:/Users/sn_96/Desktop/毕业设计_基于神经网络/Database/data_val/"
-root = "C:/Users/sn_96/Desktop/毕业设计_基于神经网络/Database/rescale/"
+train = 'DIR'
+test = "DIR"
+val = "DIR"
+root = "DIR"
 
 def cutmove(root, target, file_name):
     os.rename(root + file_name, target + file_name)
