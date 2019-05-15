@@ -9,3 +9,11 @@ I only uploaded a modified code with additional function to connect the downstre
 # Gender classification
 This part includes a plain CNN method and a ResNet structure as well as their ensemble models.
 
+# Dataset
+## Pedestrain
+The datasets of pedestrain detection are: 
+1. HOG+SVM: INRIA
+2. Yolov3: Pascal VOC
+
+## Gender
+PETA dataset, containing around 19000 picures
