@@ -7,7 +7,7 @@ import time
 
 
 class PedestrianDetection(object):
-    def __init__(self, img_dir='C:/Users/sn_96/Desktop/FYP_Gender_Processing/Database/pd_dataset/demo/pd_2.jpg'):
+    def __init__(self, img_dir='DIR/pd_2.jpg'):
         self.img_dir = img_dir
         self.img = self.get_data(self.img_dir)     # Image list, address
         # print(self.img.shape)
