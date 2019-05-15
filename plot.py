@@ -32,7 +32,7 @@ import numpy as np
 # plt.grid()
 # plt.show()
 
-with open("C:/Users/sn_96/Desktop/FYP_Gender_Processing/Yolo/keras-yolo3-master/train_para/loss", "r") as f:
+with open("LOSS LOG", "r") as f:
     loss = [float(item) for item in f.read().split(',')]
 print(len(loss))
 
